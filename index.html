@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Tareas</title>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div>
+                <h1>Agregar Tarea</h1>
+
+                <input type="text" v-model="nombre">
+                <button class="add" v-on:click="handleAdd">Add</button>
+                <h1 v-text="mensaje"></h1>
+
+                <div v-for="(nombre, i) in upperNombres" :key="i">
+                    <span :class="[complets[i]]">{{nombre}} </span>
+                    <input v-model="nombreUpdate" v-if="isUpdate && i === id" type="text">
+                    <div v-if="!isUpdate " class="controls 1" :class="[complets[i]]">
+                        <button class="delete"  v-on:click="handleDelete(i)">Del</button><!--  -->
+                        <button class="edit" v-on:click="handleUpdate(i)">Edi</button><!--  -->
+                        <button class="complete"   v-on:click="handleComplete(i)">
+                            <span>{{complets[i]}}</span>
+                        </button><!--  -->
+                    </div>
+                    <div v-if="isUpdate && i === id" class="controls 2">
+                        <button class="cancel" v-on:click="handleCancel">Cancel</button><!--  -->
+                        <button class="confirm" v-on:click="handleConfirm(i)">Confirm</button><!--  -->
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <script src="https://unpkg.com/vue@3"></script>
+    <script>
+        const {createApp} = Vue;
+        const app = createApp({
+            data(){
+                return {
+                    nombres: ['jAVIER', 'fREDY', 'jUAN'],
+                    complets: ['uncompleted', 'uncompleted', 'uncompleted'],
+                    mensaje: "Listado de Tareas",
+                    isUpdate: false,
+                    isCompleted: false,
+                    nombreUpdate: "",
+                    nombre: "",
+                    id: 0,
+                    classIsCompleted: "uncompleted"
+                }
+            },
+            computed:{
+                upperNombres(){
+                    return this.nombres = this.nombres.map(nombre => nombre.toLowerCase())
+                }
+            },
+            methods:{
+                handleAdd(){
+                    console.log(this.listaCompleted);
+                    if(this.nombre !== ""){
+                        this.nombres = [this.nombre, ...this.nombres]
+                        this.complets = ["uncompleted", ...this.complets]
+                    }
+                },
+                /* Me quede aquí */
+                handleComplete(id){
+                    this.complets[id] = this.complets[id] == "uncompleted" ? "completed" : "uncompleted";
+                    this.classIsCompleted = this.complets[id];
+                    this.isCompleted = true;
+                },
+                handleCancel(){
+                    this.isUpdate = false;
+                    this.nombreUpdate = "";
+                },
+                handleConfirm(id){
+                    if(this.nombreUpdate !== ""){
+                        this.nombres[id] = this.nombreUpdate;
+                        this.isUpdate = false;
+                        this.nombreUpdate = ""
+                    }
+                },
+                handleUpdate(id){
+                    this.id = id
+                    this.isUpdate = true;
+                },
+                handleDelete(id){
+                    this.nombres = this.nombres.filter((nombre, index) => index !== id )
+                }
+            }
+        })
+        app.mount("#app")
+    </script>
+    <style scoped>
+        #app{
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+        .container{
+            display: flex;
+            justify-content: center;
+        }
+        button{
+            border-style: none;
+            padding: 8px 15px;
+            border-radius: 2px;
+            margin: 4px 10px;
+            cursor: pointer;
+            color: #fff;
+        }
+        input{
+            border-style: none;
+            padding: 8px 6px;
+            border-bottom: 1px solid gray;
+            outline: none;
+        }
+        .controls{
+            display: flex;
+        }
+        .delete{
+            background-color: #ff5722;
+        }
+        .edit{
+            background-color: #4caf50;
+        }
+        .add{
+            background-color: #2196f3;
+        }
+        .cancel{
+            background-color: #ff9800;
+        }
+        .confirm{
+            background-color: #4caf50;
+        }
+        .complete{
+            background-color: #673ab7;
+        }
+        .completed{
+            font-style: italic;
+            color: gray;
+            text-decoration: line-through
+        }
+        .controls.completed > button{
+            background-color: gray;
+        }
+        
+    </style>
+</body>
+</html>
